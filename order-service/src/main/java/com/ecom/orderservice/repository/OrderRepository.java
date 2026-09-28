@@ -5,9 +5,6 @@ import org.springframework.stereotype.Repository;
 
 import com.ecom.orderservice.entity.Orders;
 
-
-
-
 @Repository
 public interface OrderRepository extends CrudRepository<Orders, Long> {
 

@@ -1,6 +1,5 @@
 package com.ecom.orderservice.service;
 
-import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
@@ -8,6 +7,7 @@ import com.ecom.orderservice.dto.OrderDetailedResponse;
 import com.ecom.orderservice.dto.OrderRequest;
 import com.ecom.orderservice.dto.OrderResponse;
 import com.ecom.orderservice.entity.Orders;
+import com.ecom.orderservice.kafka.KafkaService;
 import com.ecom.orderservice.kafka.event.Event;
 import com.ecom.orderservice.kafka.utility.EventType;
 import com.ecom.orderservice.kafka.utility.GenerateEventId;
@@ -20,9 +20,11 @@ import com.ecom.orderservice.utility.OrderStatus;
 public class OrderService {
 	
 	final OrderRepository orderRepo;
+	final KafkaService kafkaService;
 
-	OrderService(OrderRepository orderRepo) {
+	OrderService(OrderRepository orderRepo, KafkaService kafkaService) {
 		this.orderRepo = orderRepo;
+		this.kafkaService = kafkaService;
 	}
 
 	public OrderResponse createOrder(OrderRequest request) {
@@ -51,6 +53,10 @@ public class OrderService {
 		
 		if(event != null) {
 			//Publish kafka event
+			
+			kafkaService.sendMessage(EventType.ORDER_CREATED.toString(), event);
+			
+			
 		}
 		
 				
